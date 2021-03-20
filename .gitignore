@@ -348,3 +348,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+cmd/jarservice/__debug_bin
+
+.vscode/
+
+.directory
