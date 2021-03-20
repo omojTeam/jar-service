@@ -1,11 +1,13 @@
 package jarmodel
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Jar struct {
-	ID          uuid.UUID `json:"id"`
-	Title       string    `json:"title" validate:"required"`
-	JarCode     string    `json:"jarCode"`
-	TimesPerDay uint      `json:"timesPerDay" validate:"required"`
-	Cards       []Card    `json:"cards" validate:"required"`
+	ID             uuid.UUID `json:"id"`
+	Title          string    `json:"title" validate:"required"`
+	TimesPerDay    uint      `json:"timesPerDay" validate:"required"`
+	RecipientEmail string    `json:"recipientEmail" validate:"required,email"`
+	Cards          []Card    `json:"cards" validate:"required"`
 }

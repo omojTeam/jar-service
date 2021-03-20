@@ -23,7 +23,6 @@ func newJarModel(domainJar *domainmodel.Jar) *jarmodel.Jar {
 		ID:          domainJar.ID,
 		Title:       domainJar.Title,
 		TimesPerDay: domainJar.TimesPerDay,
-		JarCode:     domainJar.JarCode,
 		Cards:       *newJarCardArray(&domainJar.Cards, domainJar.ID),
 	}
 }

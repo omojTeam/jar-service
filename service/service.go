@@ -4,6 +4,7 @@ import (
 	"jar-service/delivery/commands"
 	"jar-service/delivery/responses"
 	"jar-service/domain"
+	"jar-service/domain/domainmodel"
 )
 
 type jarService struct {
@@ -11,8 +12,19 @@ type jarService struct {
 }
 
 func (js *jarService) AddJar(cmd *commands.AddJarCmd) (*string, error) {
+	var err error
 
-	return nil, nil
+	jar, err := domainmodel.NewJarModel(cmd)
+	if err != nil {
+		return nil, err
+	}
+
+	err = js.JarRepository.Create(jar)
+	if err != nil {
+		return nil, err
+	}
+
+	return &jar.JarCode, nil
 }
 
 func (js *jarService) GetJar(jarCode *string) (*responses.JarModel, error) {

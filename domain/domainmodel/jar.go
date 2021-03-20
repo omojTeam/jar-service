@@ -3,6 +3,7 @@ package domainmodel
 import (
 	"errors"
 	"jar-service/delivery/commands"
+	"jar-service/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,15 +11,16 @@ import (
 )
 
 type Jar struct {
-	ID          uuid.UUID `gorm:"type:uuid;primary_key"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt `sql:"index"`
-	Title       string
-	JarCode     string `qorm:"unique"`
-	TimesPerDay uint
-	NumOfCards  uint
-	Cards       []Card `gorm:"foreignKey:JarID"`
+	ID             uuid.UUID `gorm:"type:uuid;primary_key"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt `sql:"index"`
+	Title          string
+	JarCode        string `qorm:"unique"`
+	TimesPerDay    uint
+	NumOfCards     uint
+	RecipientEmail string
+	Cards          []Card `gorm:"foreignKey:JarID"`
 }
 
 func (Jar) TableName() string {
@@ -40,10 +42,12 @@ func NewJarModel(cmd *commands.AddJarCmd) (*Jar, error) {
 	}
 
 	return &Jar{
-		Title:       cmd.Jar.Title,
-		JarCode:     cmd.Jar.JarCode,
-		TimesPerDay: cmd.Jar.TimesPerDay,
-		Cards:       *newCardArray(&cmd.Jar.Cards, cmd.Jar.ID),
+		Title:          cmd.Jar.Title,
+		JarCode:        utils.RandomCode(10),
+		TimesPerDay:    cmd.Jar.TimesPerDay,
+		RecipientEmail: cmd.Jar.RecipientEmail,
+		NumOfCards:     uint(len(cmd.Jar.Cards)),
+		Cards:          *newCardArray(&cmd.Jar.Cards, cmd.Jar.ID),
 	}, nil
 }
 
@@ -54,6 +58,10 @@ func validateCommand(cmd *commands.AddJarCmd) error {
 
 	if &cmd.Jar.TimesPerDay == nil {
 		return errors.New("TimesPerDay can not be empty!")
+	}
+
+	if &cmd.Jar.RecipientEmail == nil {
+		return errors.New("RecipientEmail can not be empty!")
 	}
 
 	if &cmd.Jar.Cards == nil {

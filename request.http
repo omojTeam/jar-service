@@ -1,0 +1,24 @@
+@host = http://localhost:8080
+
+###
+GET {{host}}/jar/123
+
+###
+POST {{host}}/jar
+Content-Type: application/json
+
+{
+   "jar": {
+      "title": "Test Jar",
+      "timesPerDay": 1,
+      "recipientEmail": "aaa@a.com",
+      "cards": [
+         {
+            "text": "U're looking good today!"
+         },
+         {
+            "text": "Smile up!"
+         }
+      ]
+   }
+}

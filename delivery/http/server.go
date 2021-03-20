@@ -2,6 +2,7 @@ package http
 
 import (
 	"jar-service/app"
+	"jar-service/delivery/commands"
 	"jar-service/domain"
 	"net/http"
 
@@ -31,8 +32,24 @@ func NewHandler(e *echo.Echo, app *app.App) {
 }
 
 func (s *server) AddJar(c echo.Context) error {
+	var cmd commands.AddJarCmd
 
-	return c.JSON(http.StatusOK, ResponseJarCode{JarCode: "123"})
+	err := c.Bind(&cmd)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, ResponseMessage{Message: err.Error()})
+	}
+
+	if err = c.Validate(cmd); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, ResponseMessage{Message: err.Error()})
+	}
+
+	jarCode, err := s.JarService.AddJar(&cmd)
+
+	if err != nil {
+		return c.JSON(getStatusCode(err), ResponseMessage{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, ResponseJarCode{JarCode: *jarCode})
 }
 
 func (s *server) GetJar(c echo.Context) error {

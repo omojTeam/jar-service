@@ -13,6 +13,12 @@ type repository struct {
 
 func (r *repository) Create(entry *domainmodel.Jar) error {
 
+	err := r.db.Create(&entry).Error
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
