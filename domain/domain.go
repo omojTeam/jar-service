@@ -8,10 +8,10 @@ import (
 
 type JarService interface {
 	AddJar(AddJarCmd *commands.AddJarCmd) (*string, error)
-	GetJar(jarCode *string) (*responses.JarModel, error)
+	GetAllJar(jarCode *string) (*responses.JarModel, error)
 }
 
 type JarRepository interface {
 	Create(jar *domainmodel.Jar) error
-	GetByJarCode(jarCode *string) (*domainmodel.Jar, error)
+	GetAllByJarCode(jarCode *string) (*domainmodel.Jar, error)
 }

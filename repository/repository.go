@@ -22,9 +22,14 @@ func (r *repository) Create(entry *domainmodel.Jar) error {
 	return nil
 }
 
-func (r *repository) GetByJarCode(jarCode *string) (*domainmodel.Jar, error) {
+func (r *repository) GetAllByJarCode(jarCode *string) (*domainmodel.Jar, error) {
+	var entry domainmodel.Jar
+	err := r.db.Preload("Cards").Where("jar_code = ?", jarCode).First(&entry).Error
 
-	return nil, nil
+	if err != nil {
+		return nil, err
+	}
+	return &entry, nil
 }
 
 func NewJarRepository(dbConn *gorm.DB) domain.JarRepository {

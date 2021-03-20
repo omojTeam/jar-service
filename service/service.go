@@ -27,9 +27,14 @@ func (js *jarService) AddJar(cmd *commands.AddJarCmd) (*string, error) {
 	return &jar.JarCode, nil
 }
 
-func (js *jarService) GetJar(jarCode *string) (*responses.JarModel, error) {
+func (js *jarService) GetAllJar(jarCode *string) (*responses.JarModel, error) {
 
-	return nil, nil
+	result, err := js.JarRepository.GetAllByJarCode(jarCode)
+	if err != nil {
+		return nil, err
+	}
+
+	return responses.NewJarModelResp(result), nil
 }
 
 func NewJarService(er domain.JarRepository) domain.JarService {
