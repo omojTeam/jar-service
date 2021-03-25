@@ -2,6 +2,9 @@
 # @host = https://jar-service.herokuapp.com
 
 ###
+GET {{host}}/jar/resetall
+
+###
 GET {{host}}/jar/all/NRF2JyPHBR
 
 ###

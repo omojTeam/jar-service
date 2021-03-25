@@ -62,6 +62,15 @@ func (js *jarService) GetOneCard(jarCode *string) (*responses.JarModel, error) {
 	return responses.NewJarModelResp(result), nil
 }
 
+func (js *jarService) ResetCardsSeenThisDay() error {
+	err := js.JarRepository.ResetCardsSeenThisDay()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func NewJarService(er domain.JarRepository) domain.JarService {
 	es := &jarService{
 		JarRepository: er,

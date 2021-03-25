@@ -10,6 +10,7 @@ type JarService interface {
 	AddJar(AddJarCmd *commands.AddJarCmd) (*string, error)
 	GetAllJar(jarCode *string) (*responses.JarModel, error)
 	GetOneCard(jarCode *string) (*responses.JarModel, error)
+	ResetCardsSeenThisDay() error
 }
 
 type JarRepository interface {
@@ -17,4 +18,5 @@ type JarRepository interface {
 	GetAllByJarCode(jarCode *string) (*domainmodel.Jar, error)
 	GetOneCardByJarCode(jarCode *string) (*domainmodel.Jar, error)
 	UpdateJar(jar *domainmodel.Jar) error
+	ResetCardsSeenThisDay() error
 }
