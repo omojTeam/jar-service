@@ -50,9 +50,17 @@ func (r *repository) GetOneCardByJarCode(jarCode *string) (*domainmodel.Jar, err
 }
 
 func (r *repository) UpdateJar(entry *domainmodel.Jar) error {
-	err := r.db.Model(&domainmodel.Card{}).Update("Seen", entry.Cards[0].Seen).Error
-	err = r.db.Model(&domainmodel.Jar{}).Update("CardsSeen", entry.CardsSeen).Error
-	err = r.db.Model(&domainmodel.Jar{}).Update("CardsSeenThisDay", entry.CardsSeenThisDay).Error
+	err := r.db.Model(&entry.Cards[0]).Update("Seen", entry.Cards[0].Seen).Error
+	if err != nil {
+		return err
+	}
+
+	err = r.db.Model(&entry).Update("CardsSeen", entry.CardsSeen).Error
+	if err != nil {
+		return err
+	}
+
+	err = r.db.Model(&entry).Update("CardsSeenThisDay", entry.CardsSeenThisDay).Error
 	if err != nil {
 		return err
 	}
