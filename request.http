@@ -1,7 +1,11 @@
 @host = http://localhost:8080
+# @host = https://jar-service.herokuapp.com
 
 ###
-GET {{host}}/jar/all/ynAfTDxuNK
+GET {{host}}/jar/all/NRF2JyPHBR
+
+###
+GET {{host}}/jar/card/NRF2JyPHBR
 
 ###
 POST {{host}}/jar
@@ -10,7 +14,7 @@ Content-Type: application/json
 {
    "jar": {
       "title": "Test Jar",
-      "timesPerDay": 1,
+      "cardsPerDay": 1,
       "recipientEmail": "aaa@a.com",
       "cards": [
          {

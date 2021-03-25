@@ -28,6 +28,7 @@ func NewHandler(e *echo.Echo, app *app.App) {
 		app,
 	}
 	e.POST("/jar", handler.AddJar)
+	e.GET("/jar/card/:code", handler.GetCard)
 
 	//TODO: Temp for debugging purposes
 	e.GET("/jar/all/:code", handler.GetJar)
@@ -61,6 +62,21 @@ func (s *server) GetJar(c echo.Context) error {
 	)
 
 	resp, err := s.JarService.GetAllJar(&jarCode)
+
+	if err != nil {
+		return c.JSON(getStatusCode(err), ResponseMessage{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (s *server) GetCard(c echo.Context) error {
+	var (
+		err     error
+		jarCode = c.Param("code")
+	)
+
+	resp, err := s.JarService.GetOneCard(&jarCode)
 
 	if err != nil {
 		return c.JSON(getStatusCode(err), ResponseMessage{Message: err.Error()})

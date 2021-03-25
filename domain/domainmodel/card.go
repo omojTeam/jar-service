@@ -14,6 +14,7 @@ type Card struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `sql:"index"`
 	Text      string
+	Seen      bool
 	JarID     uuid.UUID
 }
 
