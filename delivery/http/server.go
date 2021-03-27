@@ -28,9 +28,11 @@ func NewHandler(e *echo.Echo, app *app.App) {
 		app,
 	}
 	e.POST("/jar", handler.AddJar)
+	e.GET("/jar/card/:code", handler.GetCard)
 
 	//TODO: Temp for debugging purposes
 	e.GET("/jar/all/:code", handler.GetJar)
+	e.GET("/jar/resetall", handler.ResetCardsSeenThisDay)
 }
 
 func (s *server) AddJar(c echo.Context) error {
@@ -55,10 +57,7 @@ func (s *server) AddJar(c echo.Context) error {
 }
 
 func (s *server) GetJar(c echo.Context) error {
-	var (
-		err     error
-		jarCode = c.Param("code")
-	)
+	var jarCode = c.Param("code")
 
 	resp, err := s.JarService.GetAllJar(&jarCode)
 
@@ -67,6 +66,29 @@ func (s *server) GetJar(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
+}
+
+func (s *server) GetCard(c echo.Context) error {
+	var jarCode = c.Param("code")
+
+	resp, err := s.JarService.GetOneCard(&jarCode)
+
+	if err != nil {
+		return c.JSON(getStatusCode(err), ResponseMessage{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (s *server) ResetCardsSeenThisDay(c echo.Context) error {
+
+	err := s.JarService.ResetCardsSeenThisDay()
+
+	if err != nil {
+		return c.JSON(getStatusCode(err), ResponseMessage{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, ResponseMessage{Message: "ok"})
 }
 
 func getStatusCode(err error) int {

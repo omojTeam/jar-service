@@ -11,16 +11,18 @@ import (
 )
 
 type Jar struct {
-	ID             uuid.UUID `gorm:"type:uuid;primary_key"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      gorm.DeletedAt `sql:"index"`
-	Title          string
-	JarCode        string `qorm:"unique"`
-	TimesPerDay    uint
-	NumOfCards     uint
-	RecipientEmail string
-	Cards          []Card `gorm:"foreignKey:JarID"`
+	ID               uuid.UUID `gorm:"type:uuid;primary_key"`
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        gorm.DeletedAt `sql:"index"`
+	Title            string
+	JarCode          string `qorm:"unique"`
+	CardsPerDay      uint
+	CardsSeen        uint
+	CardsSeenThisDay uint
+	NumOfCards       uint
+	RecipientEmail   string
+	Cards            []Card `gorm:"foreignKey:JarID"`
 }
 
 func (Jar) TableName() string {
@@ -44,7 +46,7 @@ func NewJarModel(cmd *commands.AddJarCmd) (*Jar, error) {
 	return &Jar{
 		Title:          cmd.Jar.Title,
 		JarCode:        utils.RandomCode(10),
-		TimesPerDay:    cmd.Jar.TimesPerDay,
+		CardsPerDay:    cmd.Jar.CardsPerDay,
 		RecipientEmail: cmd.Jar.RecipientEmail,
 		NumOfCards:     uint(len(cmd.Jar.Cards)),
 		Cards:          *newCardArray(&cmd.Jar.Cards, cmd.Jar.ID),
@@ -56,7 +58,7 @@ func validateCommand(cmd *commands.AddJarCmd) error {
 		return errors.New("Title can not be empty!")
 	}
 
-	if &cmd.Jar.TimesPerDay == nil {
+	if &cmd.Jar.CardsPerDay == nil {
 		return errors.New("TimesPerDay can not be empty!")
 	}
 

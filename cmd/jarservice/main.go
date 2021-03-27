@@ -4,6 +4,7 @@ import (
 	"context"
 	"jar-service/app"
 	"jar-service/config"
+	"jar-service/delivery/cron"
 	"jar-service/delivery/http"
 	"jar-service/domain/domainmodel"
 	"jar-service/repository"
@@ -56,6 +57,7 @@ func main() {
 	a := app.NewApp(es)
 
 	http.NewHandler(e, a)
+	cron.NewCron(a)
 
 	log.Fatal(e.Start(":" + config.Cfg.Port))
 }
