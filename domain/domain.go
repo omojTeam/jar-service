@@ -10,6 +10,7 @@ type JarService interface {
 	AddJar(AddJarCmd *commands.AddJarCmd) (*string, error)
 	GetAllJar(jarCode *string) (*responses.JarModel, error)
 	GetOneCard(jarCode *string) (*responses.JarModel, error)
+	ResetJar(jarCode *string) error
 	ResetCardsSeenThisDay() error
 }
 

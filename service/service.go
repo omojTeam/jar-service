@@ -76,6 +76,30 @@ func (js *jarService) ResetCardsSeenThisDay() error {
 	return nil
 }
 
+func (js *jarService) ResetJar(jarCode *string) error {
+
+	result, err := js.JarRepository.GetAllByJarCode(jarCode)
+	if err != nil {
+		return err
+	}
+
+	if result.NumOfCards-result.CardsSeen <= 0 {
+
+		result.CardsSeen = 0
+		for _, k := range result.Cards {
+			k.Seen = false
+		}
+
+		err := js.JarRepository.UpdateJar(result)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return domain.ErrBadParamInput
+}
+
 func NewJarService(er domain.JarRepository) domain.JarService {
 	es := &jarService{
 		JarRepository: er,

@@ -5,10 +5,13 @@
 GET {{host}}/jar/resetall
 
 ###
-GET {{host}}/jar/all/KlSZQ0W3u9
+GET {{host}}/jar/reset/NEQL3eTEIk
 
 ###
-GET {{host}}/jar/card/KlSZQ0W3u9
+GET {{host}}/jar/all/NEQL3eTEIk
+
+###
+GET {{host}}/jar/card/NEQL3eTEIk
 
 ###
 POST {{host}}/jar

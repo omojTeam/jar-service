@@ -30,6 +30,7 @@ func NewHandler(e *echo.Echo, app *app.App) {
 	e.GET("/", handler.Index)
 	e.POST("/jar", handler.AddJar)
 	e.GET("/jar/card/:code", handler.GetCard)
+	e.GET("/jar/reset/:code", handler.ResetJar)
 
 	//TODO: Temp for debugging purposes
 	e.GET("/jar/all/:code", handler.GetJar)
@@ -45,11 +46,11 @@ func (s *server) AddJar(c echo.Context) error {
 
 	err := c.Bind(&cmd)
 	if err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, ResponseMessage{Message: err.Error()})
+		return c.JSON(getStatusCode(domain.ErrUnprocessableEntity), ResponseMessage{Message: err.Error()})
 	}
 
 	if err = c.Validate(cmd); err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, ResponseMessage{Message: err.Error()})
+		return c.JSON(getStatusCode(domain.ErrUnprocessableEntity), ResponseMessage{Message: err.Error()})
 	}
 
 	jarCode, err := s.JarService.AddJar(&cmd)
@@ -96,6 +97,18 @@ func (s *server) ResetCardsSeenThisDay(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseMessage{Message: "ok"})
 }
 
+func (s *server) ResetJar(c echo.Context) error {
+	var jarCode = c.Param("code")
+
+	err := s.JarService.ResetJar(&jarCode)
+
+	if err != nil {
+		return c.JSON(getStatusCode(err), ResponseMessage{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, ResponseMessage{Message: "ok"})
+}
+
 func getStatusCode(err error) int {
 	if err == nil {
 		return http.StatusOK
@@ -112,6 +125,8 @@ func getStatusCode(err error) int {
 		return http.StatusConflict
 	case domain.ErrUnauthorized:
 		return http.StatusUnauthorized
+	case domain.ErrBadParamInput, domain.ErrUnprocessableEntity:
+		return http.StatusUnprocessableEntity
 	default:
 		return http.StatusInternalServerError
 	}
