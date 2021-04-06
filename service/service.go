@@ -48,8 +48,12 @@ func (js *jarService) GetOneCard(jarCode *string) (*responses.JarModel, error) {
 		return nil, err
 	}
 
-	if result.CardsSeen >= result.NumOfCards || int(result.CardsPerDay)-int(result.CardsSeenThisDay) <= 0 {
+	if result.CardsSeen >= result.NumOfCards {
 		return nil, domain.ErrNotFound
+	}
+
+	if result.CardsPerDay-result.CardsSeenThisDay <= 0 {
+		return nil, domain.ErrForbidden
 	}
 
 	if len(result.Cards) <= 0 {

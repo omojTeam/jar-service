@@ -127,6 +127,8 @@ func getStatusCode(err error) int {
 		return http.StatusUnauthorized
 	case domain.ErrBadParamInput, domain.ErrUnprocessableEntity:
 		return http.StatusUnprocessableEntity
+	case domain.ErrForbidden:
+		return http.StatusForbidden
 	default:
 		return http.StatusInternalServerError
 	}

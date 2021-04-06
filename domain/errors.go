@@ -10,4 +10,5 @@ var (
 	ErrBadParamInput       = errors.New("Given parameter is not valid")
 	ErrUnauthorized        = errors.New("Unauthorized")
 	ErrUnprocessableEntity = errors.New("Unprocessable Entity")
+	ErrForbidden           = errors.New("Forbidden")
 )
