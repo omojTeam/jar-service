@@ -9,4 +9,5 @@ var (
 	ErrConflict            = errors.New("Conflict detected")
 	ErrBadParamInput       = errors.New("Given parameter is not valid")
 	ErrUnauthorized        = errors.New("Unauthorized")
+	ErrUnprocessableEntity = errors.New("Unprocessable Entity")
 )

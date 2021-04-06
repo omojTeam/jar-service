@@ -5,10 +5,13 @@
 GET {{host}}/jar/resetall
 
 ###
-GET {{host}}/jar/all/NRF2JyPHBR
+GET {{host}}/jar/reset/NEQL3eTEIk
 
 ###
-GET {{host}}/jar/card/NRF2JyPHBR
+GET {{host}}/jar/all/NEQL3eTEIk
+
+###
+GET {{host}}/jar/card/NEQL3eTEIk
 
 ###
 POST {{host}}/jar
@@ -18,7 +21,7 @@ Content-Type: application/json
    "jar": {
       "title": "Test Jar",
       "cardsPerDay": 1,
-      "recipientEmail": "aaa@a.com",
+      "recipientEmail": "kondzir@gmail.com",
       "cards": [
          {
             "text": "U're looking good today!"

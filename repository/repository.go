@@ -22,16 +22,6 @@ func (r *repository) Create(entry *domainmodel.Jar) error {
 	return nil
 }
 
-func (r *repository) GetAllByJarCode(jarCode *string) (*domainmodel.Jar, error) {
-	var entry domainmodel.Jar
-	err := r.db.Preload("Cards").Where("jar_code = ?", jarCode).First(&entry).Error
-
-	if err != nil {
-		return nil, err
-	}
-	return &entry, nil
-}
-
 func (r *repository) GetOneCardByJarCode(jarCode *string) (*domainmodel.Jar, error) {
 	var entry domainmodel.Jar
 	err := r.db.Preload("Cards",
@@ -50,12 +40,15 @@ func (r *repository) GetOneCardByJarCode(jarCode *string) (*domainmodel.Jar, err
 }
 
 func (r *repository) UpdateJar(entry *domainmodel.Jar) error {
-	err := r.db.Model(&entry.Cards[0]).Update("Seen", entry.Cards[0].Seen).Error
-	if err != nil {
-		return err
+
+	for i := range entry.Cards {
+		err := r.db.Model(&entry.Cards[i]).Update("Seen", entry.Cards[i].Seen).Error
+		if err != nil {
+			return err
+		}
 	}
 
-	err = r.db.Model(&entry).Update("CardsSeen", entry.CardsSeen).Error
+	err := r.db.Model(&entry).Update("CardsSeen", entry.CardsSeen).Error
 	if err != nil {
 		return err
 	}
@@ -66,6 +59,16 @@ func (r *repository) UpdateJar(entry *domainmodel.Jar) error {
 	}
 
 	return nil
+}
+
+func (r *repository) GetAllByJarCode(jarCode *string) (*domainmodel.Jar, error) {
+	var entry domainmodel.Jar
+	err := r.db.Preload("Cards").Where("jar_code = ?", jarCode).First(&entry).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &entry, nil
 }
 
 func (r *repository) ResetCardsSeenThisDay() error {

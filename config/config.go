@@ -7,8 +7,12 @@ import (
 )
 
 type Config struct {
-	DbAccess string
-	Port     string
+	DbAccess      string
+	Port          string
+	EmailHost     string
+	EmailPort     int
+	EmailUsername string
+	EmailPassword string
 }
 
 var Cfg Config
@@ -16,6 +20,10 @@ var Cfg Config
 func LoadConfig() error {
 	v.AutomaticEnv()
 	Cfg.Port = v.GetString("PORT")
+	Cfg.EmailHost = v.GetString("EMAIL_HOST")
+	Cfg.EmailPort = v.GetInt("EMAIL_PORT")
+	Cfg.EmailUsername = v.GetString("EMAIL_LOGIN")
+	Cfg.EmailPassword = v.GetString("EMAIL_PASSWORD")
 
 	if v.GetString("ENV") == "dev" {
 		Cfg.DbAccess = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
