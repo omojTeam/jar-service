@@ -24,6 +24,11 @@ func (js *jarService) AddJar(cmd *commands.AddJarCmd) (*string, error) {
 		return nil, err
 	}
 
+	err = jar.SendEmail()
+	if err != nil {
+		return nil, err
+	}
+
 	return &jar.JarCode, nil
 }
 

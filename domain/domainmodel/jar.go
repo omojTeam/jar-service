@@ -1,12 +1,16 @@
 package domainmodel
 
 import (
+	"crypto/tls"
 	"errors"
+	"fmt"
+	"jar-service/config"
 	"jar-service/delivery/commands"
 	"jar-service/utils"
 	"time"
 
 	"github.com/google/uuid"
+	gomail "gopkg.in/gomail.v2"
 	"gorm.io/gorm"
 )
 
@@ -59,7 +63,7 @@ func validateCommand(cmd *commands.AddJarCmd) error {
 	}
 
 	if &cmd.Jar.CardsPerDay == nil {
-		return errors.New("TimesPerDay can not be empty!")
+		return errors.New("CardsPerDay can not be empty!")
 	}
 
 	if &cmd.Jar.RecipientEmail == nil {
@@ -68,6 +72,24 @@ func validateCommand(cmd *commands.AddJarCmd) error {
 
 	if &cmd.Jar.Cards == nil {
 		return errors.New("Questions can not be empty!")
+	}
+
+	return nil
+}
+
+func (jar *Jar) SendEmail() error {
+	m := gomail.NewMessage()
+	m.SetHeader("From", config.Cfg.EmailUsername)
+	m.SetHeader("To", jar.RecipientEmail)
+	m.SetHeader("Subject", fmt.Sprintf("You've received a Happiness Jar! - %s", jar.Title))
+	//TODO: Nice html template
+	m.SetBody("text/plain", fmt.Sprintf(`Check it out on: https://jar-web-app.herokuapp.com/%s`, jar.JarCode))
+
+	d := gomail.NewDialer(config.Cfg.EmailHost, config.Cfg.EmailPort, config.Cfg.EmailUsername, config.Cfg.EmailPassword)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	if err := d.DialAndSend(m); err != nil {
+		return err
 	}
 
 	return nil
