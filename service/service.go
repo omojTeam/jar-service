@@ -89,9 +89,10 @@ func (js *jarService) ResetJar(jarCode *string) error {
 
 	if result.NumOfCards-result.CardsSeen <= 0 {
 
+		result.CardsSeenThisDay = 0
 		result.CardsSeen = 0
-		for _, k := range result.Cards {
-			k.Seen = false
+		for i := range result.Cards {
+			result.Cards[i].Seen = false
 		}
 
 		err := js.JarRepository.UpdateJar(result)
