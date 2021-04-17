@@ -74,6 +74,10 @@ func validateCommand(cmd *commands.AddJarCmd) error {
 		return errors.New("Questions can not be empty!")
 	}
 
+	if cmd.Jar.CardsPerDay > uint(len(cmd.Jar.Cards)) {
+		return errors.New("CardsPerDay can not be larger than total number of cards!")
+	}
+
 	return nil
 }
 
