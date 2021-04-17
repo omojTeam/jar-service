@@ -82,8 +82,7 @@ func (jar *Jar) SendEmail() error {
 	m.SetHeader("From", config.Cfg.EmailUsername)
 	m.SetHeader("To", jar.RecipientEmail)
 	m.SetHeader("Subject", fmt.Sprintf("You've received a Happiness Jar! - %s", jar.Title))
-	//TODO: Nice html template
-	m.SetBody("text/plain", fmt.Sprintf(`Check it out on: https://jar-web-app.herokuapp.com/%s`, jar.JarCode))
+	m.SetBody("text/html", fmt.Sprintf(`<html><body style="text-align:center;"><a href="%s%s"><img src="%s"></img></a></body></html>`, config.Cfg.GuiUrl, jar.JarCode, config.Cfg.EmailImageUrl))
 
 	d := gomail.NewDialer(config.Cfg.EmailHost, config.Cfg.EmailPort, config.Cfg.EmailUsername, config.Cfg.EmailPassword)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
