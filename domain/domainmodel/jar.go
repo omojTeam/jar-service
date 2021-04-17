@@ -2,10 +2,10 @@ package domainmodel
 
 import (
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"jar-service/config"
 	"jar-service/delivery/commands"
+	"jar-service/domain/domainerrors"
 	"jar-service/utils"
 	"time"
 
@@ -59,19 +59,23 @@ func NewJarModel(cmd *commands.AddJarCmd) (*Jar, error) {
 
 func validateCommand(cmd *commands.AddJarCmd) error {
 	if &cmd.Jar.Title == nil {
-		return errors.New("Title can not be empty!")
+		return domainerrors.ErrEmptyTitle
 	}
 
 	if &cmd.Jar.CardsPerDay == nil {
-		return errors.New("CardsPerDay can not be empty!")
+		return domainerrors.ErrEmptyCardsPerDay
 	}
 
 	if &cmd.Jar.RecipientEmail == nil {
-		return errors.New("RecipientEmail can not be empty!")
+		return domainerrors.ErrEmptyRecipientEmail
 	}
 
 	if &cmd.Jar.Cards == nil {
-		return errors.New("Questions can not be empty!")
+		return domainerrors.ErrEmptyCardArray
+	}
+
+	if cmd.Jar.CardsPerDay > uint(len(cmd.Jar.Cards)) {
+		return domainerrors.ErrCardsPerDayTooLarge
 	}
 
 	return nil
@@ -82,8 +86,7 @@ func (jar *Jar) SendEmail() error {
 	m.SetHeader("From", config.Cfg.EmailUsername)
 	m.SetHeader("To", jar.RecipientEmail)
 	m.SetHeader("Subject", fmt.Sprintf("You've received a Happiness Jar! - %s", jar.Title))
-	//TODO: Nice html template
-	m.SetBody("text/plain", fmt.Sprintf(`Check it out on: https://jar-web-app.herokuapp.com/%s`, jar.JarCode))
+	m.SetBody("text/html", fmt.Sprintf(`<html><body style="text-align:center;"><a href="%s%s"><img src="%s"></img></a></body></html>`, config.Cfg.GuiUrl, jar.JarCode, config.Cfg.EmailImageUrl))
 
 	d := gomail.NewDialer(config.Cfg.EmailHost, config.Cfg.EmailPort, config.Cfg.EmailUsername, config.Cfg.EmailPassword)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
