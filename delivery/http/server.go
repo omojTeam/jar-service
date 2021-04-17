@@ -3,7 +3,7 @@ package http
 import (
 	"jar-service/app"
 	"jar-service/delivery/commands"
-	"jar-service/domain"
+	"jar-service/domain/domainerrors"
 	"net/http"
 
 	"github.com/jinzhu/gorm"
@@ -46,11 +46,11 @@ func (s *server) AddJar(c echo.Context) error {
 
 	err := c.Bind(&cmd)
 	if err != nil {
-		return c.JSON(getStatusCode(domain.ErrUnprocessableEntity), ResponseMessage{Message: err.Error()})
+		return c.JSON(getStatusCode(domainerrors.ErrUnprocessableEntity), ResponseMessage{Message: err.Error()})
 	}
 
 	if err = c.Validate(cmd); err != nil {
-		return c.JSON(getStatusCode(domain.ErrUnprocessableEntity), ResponseMessage{Message: err.Error()})
+		return c.JSON(getStatusCode(domainerrors.ErrUnprocessableEntity), ResponseMessage{Message: err.Error()})
 	}
 
 	jarCode, err := s.JarService.AddJar(&cmd)
@@ -117,17 +117,17 @@ func getStatusCode(err error) int {
 	log.Error(err)
 
 	switch err {
-	case domain.ErrInternalServerError:
+	case domainerrors.ErrInternalServerError:
 		return http.StatusInternalServerError
-	case domain.ErrNotFound, domain.ErrRecordNotFound, gorm.ErrRecordNotFound:
+	case domainerrors.ErrNotFound, domainerrors.ErrRecordNotFound, gorm.ErrRecordNotFound, domainerrors.ErrNoCardsLeft:
 		return http.StatusNotFound
-	case domain.ErrConflict:
+	case domainerrors.ErrConflict:
 		return http.StatusConflict
-	case domain.ErrUnauthorized:
+	case domainerrors.ErrUnauthorized:
 		return http.StatusUnauthorized
-	case domain.ErrBadParamInput, domain.ErrUnprocessableEntity:
+	case domainerrors.ErrBadParamInput, domainerrors.ErrUnprocessableEntity, domainerrors.ErrEmptyTitle, domainerrors.ErrEmptyCardsPerDay, domainerrors.ErrEmptyRecipientEmail, domainerrors.ErrEmptyCardArray, domainerrors.ErrCardsPerDayTooLarge:
 		return http.StatusUnprocessableEntity
-	case domain.ErrForbidden:
+	case domainerrors.ErrForbidden, domainerrors.ErrNoCardsLeftToday:
 		return http.StatusForbidden
 	default:
 		return http.StatusInternalServerError

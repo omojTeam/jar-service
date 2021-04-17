@@ -2,10 +2,10 @@ package domainmodel
 
 import (
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"jar-service/config"
 	"jar-service/delivery/commands"
+	"jar-service/domain/domainerrors"
 	"jar-service/utils"
 	"time"
 
@@ -59,23 +59,23 @@ func NewJarModel(cmd *commands.AddJarCmd) (*Jar, error) {
 
 func validateCommand(cmd *commands.AddJarCmd) error {
 	if &cmd.Jar.Title == nil {
-		return errors.New("Title can not be empty!")
+		return domainerrors.ErrEmptyTitle
 	}
 
 	if &cmd.Jar.CardsPerDay == nil {
-		return errors.New("CardsPerDay can not be empty!")
+		return domainerrors.ErrEmptyCardsPerDay
 	}
 
 	if &cmd.Jar.RecipientEmail == nil {
-		return errors.New("RecipientEmail can not be empty!")
+		return domainerrors.ErrEmptyRecipientEmail
 	}
 
 	if &cmd.Jar.Cards == nil {
-		return errors.New("Questions can not be empty!")
+		return domainerrors.ErrEmptyCardArray
 	}
 
 	if cmd.Jar.CardsPerDay > uint(len(cmd.Jar.Cards)) {
-		return errors.New("CardsPerDay can not be larger than total number of cards!")
+		return domainerrors.ErrCardsPerDayTooLarge
 	}
 
 	return nil

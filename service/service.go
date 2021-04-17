@@ -4,6 +4,7 @@ import (
 	"jar-service/delivery/commands"
 	"jar-service/delivery/responses"
 	"jar-service/domain"
+	"jar-service/domain/domainerrors"
 	"jar-service/domain/domainmodel"
 )
 
@@ -49,15 +50,15 @@ func (js *jarService) GetOneCard(jarCode *string) (*responses.JarModel, error) {
 	}
 
 	if result.CardsSeen >= result.NumOfCards {
-		return nil, domain.ErrNotFound
+		return nil, domainerrors.ErrNoCardsLeft
 	}
 
 	if result.CardsPerDay-result.CardsSeenThisDay <= 0 {
-		return nil, domain.ErrForbidden
+		return nil, domainerrors.ErrNoCardsLeftToday
 	}
 
 	if len(result.Cards) <= 0 {
-		return nil, domain.ErrRecordNotFound
+		return nil, domainerrors.ErrNoCardsLeft
 	}
 
 	result.Cards[0].Seen = true
@@ -102,7 +103,7 @@ func (js *jarService) ResetJar(jarCode *string) error {
 		return nil
 	}
 
-	return domain.ErrBadParamInput
+	return domainerrors.ErrBadParamInput
 }
 
 func NewJarService(er domain.JarRepository) domain.JarService {
